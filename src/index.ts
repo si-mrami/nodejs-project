@@ -5,7 +5,9 @@ import cookiePARSER from "cookie-parser";
 import http from "http";
 import compression from "compression";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 app.use(
   cors({
@@ -19,13 +21,9 @@ app.use(compression());
 // Connect to MongoDB
 const connectDb = async () => {
   try {
-    await mongoose
-      .connect(
-        "mongodb+srv://simrami1:mrami1902@cluster0.a4bqotb.mongodb.net/?retryWrites=true&w=majority"
-      )
-      .then(() => {
-        console.log("MongoDB connected!");
-      });
+    await mongoose.connect(process.env.MONGO_URL).then(() => {
+      console.log("MongoDB connected!");
+    });
   } catch (error) {
     console.error("error connection in db ", error);
   }
