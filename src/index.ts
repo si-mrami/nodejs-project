@@ -6,6 +6,7 @@ import http from "http";
 import compression from "compression";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import appRouter from "./Routers/User";
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,9 @@ const PORT = process.env.PORT || 4000;
 
 const server = http.createServer(app);
 
+// Routes
+app.use("/api", appRouter);
+// server rouning
 server.listen(PORT, () => {
   connectDb();
   console.log(`Server running on port ${PORT}`);
