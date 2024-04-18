@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Userss from "../db/Users";
 import crypto from "crypto";
-import bcrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 // signup user
@@ -36,5 +36,33 @@ export const SignUp = async (req: Request, res: Response) => {
       .json({ status: "OK", message: "User created successfully!" });
   } catch (error) {
     console.error("error in signup", error);
+  }
+};
+
+// login user
+export const Login = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    const user = await Userss.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ status: "ERROR", message: "User not found!" });
+    }
+    const checkPass = await bcrypt.compare(
+      password,
+      user.authentication.password
+    );
+    if (!checkPass) {
+      return res
+        .status(400)
+        .json({ status: "ERROR", message: "Invalide password!" });
+    }
+    const token = jwt.sign({ _id: user._id }, "hsjhdjshdjshdsjhd");
+    res
+      .header("auth-token", token)
+      .json({ status: "OK", message: "User Logged successfully!" });
+  } catch (error) {
+    console.error("error in login", error);
   }
 };
